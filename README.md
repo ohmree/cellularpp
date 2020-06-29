@@ -18,3 +18,5 @@ meson compile -C build
 meson wrap install catch2
 meson test -C build
 ```
+
+Then look inside `build/src`.
