@@ -1,4 +1,4 @@
 executable('cellular++',
 		'main.cpp',
-		dependencies : [cellularpp_dep],
+    include_directories : include_dir,
 		install : true)

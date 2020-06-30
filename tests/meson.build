@@ -1,9 +1,9 @@
 catch2_dep = dependency('catch2',
                         fallback : ['catch2', 'catch2_dep'])
 
-test_s = executable('test_s', ['test_s.cpp'],
+test_example = executable('test_example', ['test_example.cpp'],
                            include_directories : include_dirs,
-                           dependencies : [catch2_dep, cellularpp_dep])
+                           dependencies : [catch2_dep])
 
-test('S test',
-     test_s)
+test('Catch2 example test',
+     test_example)
