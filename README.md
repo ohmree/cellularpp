@@ -11,12 +11,12 @@ This will be a cellular automata library in C++, right now it's a work in progre
  * Catch2 (optional, can use meson wrap if not installed on system)
 
 ```sh
-git clone https://github.com/omrisim210/cellularpp.git
-cd cellularpp
-meson build
-meson compile -C build
-meson wrap install catch2
-meson test -C build
+$ git clone https://github.com/omrisim210/cellularpp.git
+$ cd cellularpp
+$ meson build
+$ meson compile -C build
+$ meson wrap install catch2
+$ meson test -C build
 ```
 
 Then look inside `build/bin`.
