@@ -1,6 +1,6 @@
 # cellular++
 
-This will be a cellular automata library in C++, right now it's just a project skeleton.
+This will be a cellular automata library in C++, right now it's a work in progress.
 
 ## Getting & building
 
@@ -19,4 +19,15 @@ meson wrap install catch2
 meson test -C build
 ```
 
-Then look inside `build/src`.
+Then look inside `build/bin`.
+
+### Hacking
+The library is header-only and located in `include`, while the binary is in `bin`.
+
+## TODO
+[x] Implement automata in their most basic, buggy and unpolished form
+[] Fix stepping (look in `include/cellular.hpp` for bug descriptions)
+[] Fix weird extra-cell bug (see previous item)
+[] Fix testing (the test just doesn't seem to work)
+[] Implement meaningful tests
+[] Implement more automata like a powder toy type thing, WireWorld and some roguelike cave-generation algorithms.
