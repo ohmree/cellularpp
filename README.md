@@ -5,7 +5,7 @@ This will be a cellular automata library in C++, right now it's a work in progre
 ## Getting & building
 
 ### Requirements:
- * A C++ compiler that supports C++2a
+ * A C++ compiler that supports C++2a (although C++17 might also work, YMMV)
  * Meson
  * Ninja
  * Catch2 (optional, can use meson wrap if not installed on system)
