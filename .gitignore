@@ -105,3 +105,8 @@ flycheck_*.el
 
 # Tmux logs
 tmux-*.log
+
+# Docker files...
+/docker
+# ...but not THE `Dockerfile`
+!Dockerfile

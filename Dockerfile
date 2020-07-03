@@ -11,8 +11,10 @@ LABEL description="MinGW build environment image with Meson" \
 # Synchronise pacman repositories and update system using yay
 RUN sudo -u yay -- yay --noconfirm -Syu
 
-# Install Meson
-RUN sudo -u yay -- yay --noconfirm --needed -S mingw-w64-meson
+# Install Meson and Miniserve
+RUN sudo -u yay -- yay --noconfirm --needed -S mingw-w64-meson miniserve-bin
 
 # Clear yay cache
 RUN sudo -u yay -- rm -rf /home/yay/.cache/*
+
+WORKDIR /root/cellular++

@@ -1,0 +1,25 @@
+[binaries]
+c = '/usr/bin/x86_64-w64-mingw32-gcc'
+cpp = '/usr/bin/x86_64-w64-mingw32-g++'
+ld = '/usr/bin/x86_64-w64-mingw32-g++'
+addr2line = '/usr/bin/x86_64-w64-mingw32-addr2line'
+ar = '/usr/bin/x86_64-w64-mingw32-ar'
+elfedit = '/usr/bin/x86_64-w64-mingw32-elfedit'
+objcopy = '/usr/bin/x86_64-w64-mingw32-objcopy'
+objdump = '/usr/bin/x86_64-w64-mingw32-objdump'
+ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
+readelf = '/usr/bin/x86_64-w64-mingw32-readelf'
+strip = '/usr/bin/x86_64-w64-mingw32-strip'
+pkgconfig = '/usr/bin/x86_64-w64-mingw32-pkg-config'
+windres = '/usr/bin/x86_64-w64-mingw32-windres'
+cmake = '/usr/bin/x86_64-w64-mingw32-cmake'
+
+[properties]
+# Directory that contains 'bin', 'lib', etc
+root = '/usr/x86_64-w64-mingw32'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
