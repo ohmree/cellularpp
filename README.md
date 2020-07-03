@@ -26,15 +26,11 @@ Then look inside `build/bin`.
 
 ### Cross compiling for Windows with Docker:
 
+If running for the first time:
 ```
 $ mkdir docker
 $ sudo docker build -t meson-mingw-build-env -f Dockerfile ./docker
-```
-
-Then, if running for the first time:
-
-```
-$ sudo docker run --name=mingw -it -v $PWD:/root/cellular++ meson-mingw-build-env
+$ sudo docker run --name=mingw -it -v $PWD:/root meson-mingw-build-env
 ```
 
 Else:
@@ -46,8 +42,9 @@ $ sudo docker start --attach --interactive mingw
 Then, in the Docker shell:
 
 ```
-[root@xxxxxxxxxxxx cellular++]# meson build-mingw --cross-file mingw-cross.txt
-[root@xxxxxxxxxxxx cellular++]# mingw_make_pkg.sh <ARCH> <PACKAGE> <BASEDIR> <BINARY_OBJ>
+# $MESON build-mingw
+# cd build-mingw && ninja
+# mingw_make_pkg.sh x86_64 cellular++ cellular++.zip bin/cellular++.exe
 ```
 
 Where:
@@ -59,28 +56,25 @@ Where:
 So for example, running:
 
 ```
-[root@xxxxxxxxxxxx cellular++]# pushd build-mingw/bin
-[root@xxxxxxxxxxxx cellular++]# mingw_make_pkg.sh x86_64 cellular++.zip cellular++ ./cellular++.exe
-[root@xxxxxxxxxxxx cellular++]# popd
+# mingw_make_pkg.sh x86_64 cellular++ cellular++ bin/cellular++.exe
 ```
 
-Should result in a zip file `build-mingw/bin/cellular++.zip` that contains something along the lines of this:
+Should result in an archive `build-mingw/cellular++.7z` that contains something along the lines of this:
 
 ```
-[root@xxxxxxxxxxxx cellular++]# unzip -l build-mingw/bin/cellular++.zip
-Archive:  cellular++.zip
-  Length      Date    Time    Name
----------  ---------- -----   ----
-        0  2020-07-03 06:15   cellular++/
-  1275918  2020-07-03 06:15   cellular++/SDL2.dll
-   874147  2020-07-03 06:15   cellular++/cellular++.exe
-    82446  2020-07-03 06:15   cellular++/libgcc_s_seh-1.dll
-  1711630  2020-07-03 06:15   cellular++/libstdc++-6.dll
-    56832  2020-07-03 06:15   cellular++/libwinpthread-1.dll
----------                     -------
-  4000973                     6 files
+# als build-mingw/cellular++
+...some output skipped for brevity
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2020-07-03 10:11:40 D....            0            0  cellular++
+2020-07-03 10:11:40 ....A      1275918       823008  cellular++/SDL2.dll
+2020-07-03 10:11:39 ....A       173622               cellular++/cellular++.exe
+2020-07-03 10:11:40 ....A        82446               cellular++/libgcc_s_seh-1.dll
+2020-07-03 10:11:40 ....A      1711630               cellular++/libstdc++-6.dll
+2020-07-03 10:11:40 ....A        56832               cellular++/libwinpthread-1.dll
+------------------- ----- ------------ ------------  ------------------------
+2020-07-03 10:11:40            3300448       823008  5 files, 1 folders
 ```
-
 
 ### Hacking
 The library is header-only and located in `include`, while the binary is in `bin`.
