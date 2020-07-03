@@ -64,7 +64,7 @@ Then compile:
 This should result in an archive `build-mingw/cellular++.7z` that contains something along the lines of this:
 
 ```
-# als build-mingw/cellular++
+$ als build-mingw/cellular++
 ...some output skipped for brevity
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
