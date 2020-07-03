@@ -1,16 +1,28 @@
 #ifndef _CELLULAR_HPP_
 #define _CELLULAR_HPP_
 
+#include "experimental/mdspan"
+#include "pprint.hpp"
+
 #include <cstddef>
-#include <cstdio>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 
+
 namespace cellular {
+    namespace stdex = std::experimental;
     template<typename T>
     class Automaton {
+        using Grid =
+            stdex::mdspan<T, stdex::dynamic_extent, stdex::dynamic_extent>;
+
         public:
-        Automaton(const size_t x, const size_t y);
+        // Automaton of size x*y with all cells initialized to the default state
+        // (first in T enum)
+        Automaton(const size_t w, const size_t h);
         Automaton() = delete;
         void step();
         void print();
@@ -18,11 +30,13 @@ namespace cellular {
         const T& operator()(const size_t x, const size_t y) const;
         size_t width() const;
         size_t height() const;
+        void set_grid_from_file(const std::filesystem::path& filename,
+                                const char delimiter = '\n');
 
+        void set_grid_from_string(std::string&& str,
+                                  const char delimiter = '\n');
 
         protected:
-        T& cell_at(const size_t x, const size_t y);
-        const T& cell_at(const size_t x, const size_t y) const;
         const std::unordered_map<const char*, T>&
         vn_neighborhood_at(const size_t x, const size_t y);
         const std::unordered_map<const char*, T>&
@@ -31,38 +45,35 @@ namespace cellular {
         extended_vn_neighborhood_at(const size_t x, const size_t y);
         unsigned int neighbors();
         virtual T next_state(const T& current_cell, const size_t x,
-                             const size_t y)     = 0;
-        virtual char format_state(T state) const = 0;
-        virtual ~Automaton()                     = default;
+                             const size_t y)      = 0;
+        virtual char state_to_char(T state) const = 0;
+        virtual T char_to_state(char c) const     = 0;
+        virtual ~Automaton()                      = default;
+        pprint::PrettyPrinter m_pp;
 
         private:
-        size_t m_width, m_height;
-        std::vector<T> m_grid;
-        std::vector<T> m_next_grid;
+        size_t m_width;
+        size_t m_height;
+        std::vector<T> m_grid_vec;
+        std::vector<T> m_next_grid_vec;
+        Grid m_grid;
+        Grid m_next_grid;
         std::unordered_map<const char*, T> m_neighborhood;
     };
 
     template<typename T>
     inline Automaton<T>::Automaton(const size_t width, const size_t height) :
-    m_width(width - 1), m_height(height - 1), m_grid(width * height, T()),
-    m_next_grid(m_grid) {
+    m_width(width - 1), m_height(height - 1), m_grid_vec(width * height, T()),
+    m_next_grid_vec(m_grid_vec),
+    m_grid(m_grid_vec.data(), width - 1, height - 1),
+    m_next_grid(m_next_grid_vec.data(), width - 1, height - 1) {
         //   *
         //  ***
         // ** **
         //  ***
         //   *
         m_neighborhood.reserve(12);
-    }
-
-    template<typename T>
-    inline T& Automaton<T>::cell_at(const size_t x, const size_t y) {
-        return m_grid[x * m_width + y];
-    }
-
-    template<typename T>
-    inline const T& Automaton<T>::cell_at(const size_t x,
-                                          const size_t y) const {
-        return m_grid[x * m_width + y];
+        m_pp.indent(0);
     }
 
     //   *
@@ -77,10 +88,10 @@ namespace cellular {
         bool y_over_zero   = y > 0;
         bool y_under_limit = y < m_height;
 
-        if (x_over_zero) { m_neighborhood.emplace("w", cell_at(x - 1, y)); }
-        if (x_under_limit) { m_neighborhood.emplace("e", cell_at(x + 1, y)); }
-        if (y_over_zero) { m_neighborhood.emplace("n", cell_at(x, y - 1)); }
-        if (y_under_limit) { m_neighborhood.emplace("s", cell_at(x, y + 1)); }
+        if (x_over_zero) { m_neighborhood.emplace("w", m_grid(x - 1, y)); }
+        if (x_under_limit) { m_neighborhood.emplace("e", m_grid(x + 1, y)); }
+        if (y_over_zero) { m_neighborhood.emplace("n", m_grid(x, y - 1)); }
+        if (y_under_limit) { m_neighborhood.emplace("s", m_grid(x, y + 1)); }
 
         return m_neighborhood;
     }
@@ -91,27 +102,31 @@ namespace cellular {
     template<typename T>
     inline const std::unordered_map<const char*, T>&
     Automaton<T>::moore_neighborhood_at(const size_t x, const size_t y) {
-        // Partially set the neighborhood map
-        vn_neighborhood_at(x, y);
-        bool has_north_neighbor = m_neighborhood.contains("n");
-        bool has_south_neighbor = m_neighborhood.contains("s");
-        bool has_east_neighbor  = m_neighborhood.contains("e");
-        bool has_west_neighbor  = m_neighborhood.contains("w");
+        m_neighborhood.clear();
+        bool x_over_zero   = x > 0;
+        bool x_under_limit = x < m_width;
+        bool y_over_zero   = y > 0;
+        bool y_under_limit = y < m_height;
 
-        if (has_north_neighbor) {
-            if (has_east_neighbor) {
-                m_neighborhood.emplace("ne", cell_at(x, y));
+        if (x_over_zero) { m_neighborhood.emplace("w", m_grid(x - 1, y)); }
+        if (x_under_limit) { m_neighborhood.emplace("e", m_grid(x + 1, y)); }
+        if (y_over_zero) { m_neighborhood.emplace("n", m_grid(x, y - 1)); }
+        if (y_under_limit) { m_neighborhood.emplace("s", m_grid(x, y + 1)); }
+
+        if (y_over_zero) {
+            if (x_under_limit) {
+                m_neighborhood.emplace("ne", m_grid(x + 1, y - 1));
             }
-            if (has_west_neighbor) {
-                m_neighborhood.emplace("nw", cell_at(x, y));
+            if (x_over_zero) {
+                m_neighborhood.emplace("nw", m_grid(x - 1, y - 1));
             }
         }
-        if (has_south_neighbor) {
-            if (has_east_neighbor) {
-                m_neighborhood.emplace("se", cell_at(x, y));
+        if (y_under_limit) {
+            if (x_under_limit) {
+                m_neighborhood.emplace("se", m_grid(x + 1, y + 1));
             }
-            if (has_west_neighbor) {
-                m_neighborhood.emplace("sw", cell_at(x, y));
+            if (x_over_zero) {
+                m_neighborhood.emplace("sw", m_grid(x - 1, y + 1));
             }
         }
 
@@ -132,13 +147,13 @@ namespace cellular {
         bool y_over_one        = y > 1;
         bool y_one_under_limit = y < m_height - 1;
 
-        if (x_over_one) { m_neighborhood.emplace("w2", cell_at(x - 1, y)); }
+        if (x_over_one) { m_neighborhood.emplace("w2", m_grid(x - 1, y)); }
         if (x_one_under_limit) {
-            m_neighborhood.emplace("e2", cell_at(x + 1, y));
+            m_neighborhood.emplace("e2", m_grid(x + 1, y));
         }
-        if (y_over_one) { m_neighborhood.emplace("n2", cell_at(x, y - 1)); }
+        if (y_over_one) { m_neighborhood.emplace("n2", m_grid(x, y - 1)); }
         if (y_one_under_limit) {
-            m_neighborhood.emplace("s2", cell_at(x, y + 1));
+            m_neighborhood.emplace("s2", m_grid(x, y + 1));
         }
 
         return m_neighborhood;
@@ -151,39 +166,40 @@ namespace cellular {
 
     template<typename T>
     inline void Automaton<T>::step() {
-        // for (T&& cell : m_grid) {
-        //     size_t i       = &cell - &m_grid[0];
-        //     m_next_grid[i] = next_state(cell);
-        // }
         for (size_t i = 0; i <= m_width; ++i) {
-            for (size_t j = 0; i <= m_height; ++j) {
-                T cell                       = cell_at(i, j);
-                m_next_grid[i * m_width + j] = next_state(cell, i, j);
+            for (size_t j = 0; j <= m_height; ++j) {
+                T& current_cell   = m_grid(j, i);
+                m_next_grid(j, i) = next_state(current_cell, j, i);
             }
         }
-        m_grid = m_next_grid;
+        m_grid_vec = m_next_grid_vec;
     }
+
     template<typename T>
     inline void Automaton<T>::print() {
+        m_pp.print_inline('\n');
         for (size_t y = 0; y <= m_width; ++y) {
-            std::putchar('\t');
+            m_pp.indent(2);
             for (size_t x = 0; x <= m_height; ++x) {
-                T current_cell = cell_at(x, y);
-                std::printf("%c", format_state(current_cell));
+                T& current_cell = m_grid(x, y);
+                m_pp.print_inline(state_to_char(current_cell));
+                m_pp.indent(0);
             }
-            std::putchar('\n');
+            m_pp.print_inline('\n');
         }
+
+        std::cout << '\n';
     }
 
     template<typename T>
     inline T& Automaton<T>::operator()(const size_t x, const size_t y) {
-        return m_grid[x * m_width + y];
+        return m_grid(x, y);
     }
 
     template<typename T>
     inline const T& Automaton<T>::operator()(const size_t x,
                                              const size_t y) const {
-        return m_grid[x * m_width + y];
+        return m_grid(x, y);
     }
 
     template<typename T>
@@ -193,6 +209,50 @@ namespace cellular {
     template<typename T>
     inline size_t Automaton<T>::height() const {
         return m_height + 1;
+    }
+
+    template<typename T>
+    inline void
+    Automaton<T>::set_grid_from_file(const std::filesystem::path& filename,
+                                     const char delimiter) {
+        std::ifstream filein(filename);
+
+        // Construct string with file contents
+        // TODO: validate file contents, existence, etc.
+        std::string grid_string{std::istreambuf_iterator<char>(filein),
+                                std::istreambuf_iterator<char>()};
+
+        set_grid_from_string(std::move(grid_string), delimiter);
+    }
+
+
+    template<typename T>
+    inline void Automaton<T>::set_grid_from_string(std::string&& str,
+                                                   const char delimiter) {
+        // TODO: validate string non-emptiness, conformance to shape, etc.
+        std::vector<char> chars(str.begin(), str.end());
+
+        // This is an iterator
+        auto first_occurance = std::find(chars.begin(), chars.end(), delimiter);
+        // Calculate width from first occurance of delimiter...
+        m_width = first_occurance - chars.begin() - 1;
+        // ...and height from number of occurances of delimiter (e.g.
+        // newline, so amount of lines).
+        m_height = std::count(chars.begin(), chars.end(), delimiter) - 1;
+
+        // Remove delimiters
+        chars.erase(std::remove(chars.begin(), chars.end(), delimiter),
+                    chars.end());
+
+        std::vector<T> grid_vec(chars.capacity());
+        for (char c : chars) {
+            T state = char_to_state(c);
+            grid_vec.push_back(state);
+        }
+        m_grid_vec      = std::move(grid_vec);
+        m_next_grid_vec = m_grid_vec;
+        m_grid          = Grid(m_grid_vec.data(), m_width, m_height);
+        m_next_grid     = Grid(m_next_grid_vec.data(), m_width, m_height);
     }
 } // namespace cellular
 

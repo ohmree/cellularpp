@@ -1,0 +1,1 @@
+option('sdl2', type : 'feature', value : 'enabled', description : 'Build graphical interface using SDL2')
