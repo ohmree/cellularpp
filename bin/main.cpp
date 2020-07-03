@@ -76,7 +76,7 @@ class GameOfLife : public Automaton<State> {
 constexpr const char* SPINNER_PATH =
     "/home/animo/code/cellular++/tests/spinner.txt";
 
-int main() {
+int main(int argc, char** argv) {
     // FIXME: this seems to add extra living cells.
     // TODO: find out why????
     // GameOfLife gol(3, 3);
