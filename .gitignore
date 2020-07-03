@@ -110,3 +110,6 @@ tmux-*.log
 /docker
 # ...but not THE `Dockerfile`
 !Dockerfile
+
+# CCache directory
+.ccache/
