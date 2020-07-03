@@ -44,22 +44,10 @@ Then, in the Docker shell:
 ```
 # $MESON build-mingw
 # cd build-mingw && ninja
-# mingw_make_pkg.sh x86_64 cellular++ cellular++.zip bin/cellular++.exe
-```
-
-Where:
- * ARCH is the MinGW architecture, i.e. "i686" or "x86_64"
- * PACKAGE is the name of the output package, e.g. "package.zip"
- * BASEDIR is the base directory to use inside the package
- * BINARY_OBJ are the binary object(s) to process
-
-So for example, running:
-
-```
 # mingw_make_pkg.sh x86_64 cellular++ cellular++ bin/cellular++.exe
 ```
 
-Should result in an archive `build-mingw/cellular++.7z` that contains something along the lines of this:
+This should result in an archive `build-mingw/cellular++.7z` that contains something along the lines of this:
 
 ```
 # als build-mingw/cellular++
