@@ -9,6 +9,9 @@ LABEL description="MinGW build environment image with Meson" \
       version="${IMAGE_VERSION}" \
       org.animo.pkglist-cmd="pacman -Q"
 
+# Don't clutter the project directory with files that go in $HOME
+ENV HOME=/tmp/home
+
 # Synchronise pacman repositories and update system using yay.
 RUN sudo -u yay -- yay --noconfirm -Syu && \
 # Install MinGW Meson wrapper.
@@ -17,10 +20,7 @@ RUN sudo -u yay -- yay --noconfirm -Syu && \
     sudo -u yay -- rm -rf /home/yay/.cache/*
 
 # Export meson binary path for easier usage
-ENV MESON=/usr/bin/x86_64-w64-mingw32-meson
-
-# Expose port 8080 for miniserve
-EXPOSE 8080/tcp
+ENV MESON_WRAPPER=/usr/bin/x86_64-w64-mingw32-meson
 
 # Change into project directory
 WORKDIR /root/
