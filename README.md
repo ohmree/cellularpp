@@ -13,7 +13,7 @@ This will be a cellular automata library in C++, right now it's a work in progre
 
 ### Compiling natively on *nix:
 
-```sh
+```
 $ git clone https://github.com/omrisim210/cellularpp.git
 $ cd cellularpp
 $ meson build
@@ -26,26 +26,26 @@ Then look inside `build/bin`.
 
 ### Cross compiling for Windows with Docker:
 
-```sh
+```
 $ mkdir docker
 $ sudo docker build -t meson-mingw-build-env -f Dockerfile ./docker
 ```
 
 Then, if running for the first time:
 
-```sh
+```
 $ sudo docker run --name=mingw -it -v $PWD:/root/cellular++ meson-mingw-build-env
 ```
 
 Else:
 
-```sh
+```
 $ sudo docker start --attach --interactive mingw
 ```
 
 Then, in the Docker shell:
 
-```sh
+```
 [root@xxxxxxxxxxxx cellular++]# meson build-mingw --cross-file mingw-cross.txt
 ```
 
