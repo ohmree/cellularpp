@@ -39,11 +39,25 @@ Else:
 $ sudo docker start --attach --interactive mingw
 ```
 
-Then, in the Docker shell:
+Then, in the Docker shell, generate the build directory:
 
 ```
-# $MESON build-mingw
-# cd build-mingw && ninja
+# $MESON_WRAPPER build-mingw && cd build-mingw
+```
+
+Optionally, change any options you like. Some to consider are:
+
+```
+# meson configure -Dstrip=<true|false>
+# meson configure -Dbuildtype=<plain|debug|debugoptimized|release|minsize|custom>
+# meson configure -Db_ndebug=<true|false|if-release>
+```
+
+Et cetera, [read the Meson docs](https://mesonbuild.com/Builtin-options.html) for more info about them.
+
+Then compile:
+```
+# meson compile
 # mingw_make_pkg.sh x86_64 cellular++ cellular++ bin/cellular++.exe
 ```
 
