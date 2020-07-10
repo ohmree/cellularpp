@@ -14,8 +14,8 @@ ENV HOME=/tmp/home
 
 # Synchronise pacman repositories and update system using yay.
 RUN sudo -u yay -- yay --noconfirm -Syu && \
-# Install MinGW Meson wrapper.
-    sudo -u yay -- yay --noconfirm --needed -S mingw-w64-meson && \
+# Install MinGW Meson wrapper and SFML.
+    sudo -u yay -- yay --noconfirm --needed -S mingw-w64-meson mingw-w64-sfml && \
 # Clear yay cache.
     sudo -u yay -- rm -rf /home/yay/.cache/*
 

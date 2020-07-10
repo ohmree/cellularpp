@@ -1,6 +1,5 @@
-cmake = import('cmake')
-
-sdl2_dep = dependency('sdl2', fallback : ['sdl2', 'sdl2_dep'], required : get_option('sdl2'))
+gui_option = get_option('gui')
+sdl2_dep = dependency('sdl2', required : gui_option)
 
 bin_dependencies = []
 
@@ -12,4 +11,5 @@ executable('cellular++',
 		'main.cpp',
     include_directories : include_dir,
     dependencies : bin_dependencies,
+    gui_app : gui_option.enabled(),
 		install : true)
