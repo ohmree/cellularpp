@@ -1,3 +1,6 @@
+// Grid drawing code generously borrowed and heavily modified from
+// https://github.com/catsocks/sdl-grid/
+// Thanks a bunch!
 #include <SDL2/SDL.h>
 
 #include "game_of_life.hpp"
