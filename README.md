@@ -78,9 +78,26 @@ $ als build-mingw/cellular++
 2020-07-03 10:11:40            3300448       823008  5 files, 1 folders
 ```
 
+### Operating
+Assuming you're in the project root:
+```
+$ build/src/bin/cellular++ tests/spinner.txt
+```
+Look at the text file for a usage example.
+
+Alternatively, to get an empty 20x20 grid, just run the binary with no arguments.
+
+#### Controls
+Click a cell to toggle its state, press any key to step forward.
+
 ### Hacking
 The library is header-only and located in `include`, while the binary is in `bin`.
 Use `clang-format` to format code.
+
+You might want to symlink the compilation database file to the project root so language servers can recognize it out of the box:
+```
+$ ln -s build/compile_commands.json .
+```
 
 
 ## TODO:

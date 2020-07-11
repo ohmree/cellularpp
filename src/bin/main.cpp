@@ -1,9 +1,12 @@
-// Grid drawing code generously borrowed and heavily modified from
+// Grid drawing code generously lent to me by catsocks.
+// I then heavily modified it to suit my needs.
 // https://github.com/catsocks/sdl-grid/
 // Thanks a bunch!
 #include <SDL2/SDL.h>
 
-#include "game_of_life.hpp"
+#include <string>
+
+#include "automata/game_of_life.hpp"
 
 constexpr const SDL_Color BLACK = {0, 0, 0, 255};
 constexpr const SDL_Color WHITE = {255, 255, 255, 255};
@@ -11,19 +14,18 @@ constexpr const SDL_Color WHITE = {255, 255, 255, 255};
 using namespace gol;
 
 int main(int argc, char** argv) {
-	// SDL2 seems to require arguments to `main` but we don't need them ATM
-	(void) argc;
-	(void) argv;
-
-	constexpr const int grid_size = 5;
+	constexpr const int grid_size = 20;
 	GameOfLife          gol(grid_size, grid_size);
 	constexpr const int cell_size = 36;
 
-	gol.set_grid_from_file(gol::SPINNER_PATH);
+	if (argc >= 2) {
+		std::string file_path = argv[1];
+		gol.set_grid_from_file(file_path);
+	}
 
 	// + 1 so that the last grid lines fit in the screen.
-	int window_width  = (grid_size * cell_size) + 1;
-	int window_height = (grid_size * cell_size) + 1;
+	int window_width  = (gol.width() * cell_size) + 1;
+	int window_height = (gol.height() * cell_size) + 1;
 
 	const SDL_Color BACKGROUND_COLOR = WHITE;
 	SDL_Color       LINE_COLOR       = BLACK;
@@ -68,8 +70,7 @@ int main(int argc, char** argv) {
 				break;
 			}
 
-			case SDL_KEYDOWN:
-			case SDLK_SPACE: {
+			case SDL_KEYDOWN: {
 				gol.step();
 				break;
 			}

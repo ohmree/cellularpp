@@ -1,4 +1,4 @@
-#include "game_of_life.hpp"
+#include "automata/game_of_life.hpp"
 
 #include <SDL2/SDL.h>
 

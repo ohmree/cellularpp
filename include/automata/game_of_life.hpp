@@ -25,7 +25,4 @@ protected:
 	                 const size_t x,
 	                 const size_t y) override;
 };
-
-constexpr const char* SPINNER_PATH =
-    "/home/ohmree/code/cellular++/tests/spinner.txt";
 } // namespace gol
