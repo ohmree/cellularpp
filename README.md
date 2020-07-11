@@ -80,8 +80,7 @@ $ als build-mingw/cellular++
 
 ### Hacking
 The library is header-only and located in `include`, while the binary is in `bin`.
-Coding style isn't to my liking yet, I think it's some default of `clang-format`.
-I'll change it later, for now just try to stick to the project's style.
+Use `clang-format` to format code.
 
 
 ## TODO:
