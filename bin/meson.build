@@ -7,9 +7,11 @@ if sdl2_dep.found()
   bin_dependencies += sdl2_dep
 endif
 
+src_files = ['main.cpp', 'game_of_life.cpp']
+
 executable('cellular++',
-		'main.cpp',
-    include_directories : include_dir,
-    dependencies : bin_dependencies,
-    gui_app : gui_option.enabled(),
-		install : true)
+           src_files,
+           include_directories : include_dir,
+           dependencies : bin_dependencies,
+           gui_app : gui_option.enabled(),
+		   install : true)
