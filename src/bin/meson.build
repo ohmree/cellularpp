@@ -7,10 +7,15 @@ if sdl2_dep.found()
   bin_dependencies += sdl2_dep
 endif
 
-bin_src_files = ['main.cpp']
 
-executable('cellular++',
-           bin_src_files,
+executable('game_of_life',
+           'game_of_life_gui.cpp',
            dependencies : bin_dependencies,
-           gui_app : true,
+           gui_app : gui_option.enabled(),
+		   install : true)
+
+executable('wireworld',
+           'wireworld_gui.cpp',
+           dependencies : bin_dependencies,
+           gui_app : gui_option.enabled(),
 		   install : true)

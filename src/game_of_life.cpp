@@ -6,13 +6,11 @@
 #include <chrono>
 #include <cstdlib>
 #include <stdexcept>
-#include <thread>
-#include <utility>
 
 #include "cellular.hpp"
+#include "cellular_gui.hpp"
 
 constexpr const SDL_Color YELLOW = {255, 255, 0, 255};
-constexpr const SDL_Color BLACK  = {0, 0, 0, 255};
 constexpr const SDL_Color WHITE  = {255, 255, 255, 255};
 
 using namespace cellular;
@@ -20,7 +18,7 @@ using namespace gol;
 
 // First state is the default one
 GameOfLife::GameOfLife(const size_t width, const size_t height) :
-    Automaton<State>(width, height) {}
+    GuiAutomaton<State>(width, height) {}
 
 const SDL_Color GameOfLife::state_to_color(State state) const {
 	return state == State::Alive ? YELLOW : WHITE;
@@ -41,7 +39,7 @@ State GameOfLife::char_to_state(char c) const {
 		return State::Dead;
 		break;
 	default:
-		throw std::invalid_argument("Invalid state value: ");
+		throw std::invalid_argument(std::string{"Invalid state value: "} + c);
 		break;
 	}
 }

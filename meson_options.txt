@@ -1,2 +1,3 @@
 option('gui', type : 'feature', value : 'enabled', description : 'Build graphical interface')
 option('game_of_life', type : 'feature', value : 'enabled', description : 'Build Conway\'s Game of Life')
+option('wireworld', type : 'feature', value : 'enabled', description : 'Build Wireworld')

@@ -22,9 +22,11 @@ $ meson wrap install catch2
 $ meson test -C build
 ```
 
-Then look inside `build/bin`.
+Then look inside `build/bin**.
 
 ### Cross compiling for Windows with Docker:
+
+**NOTE: The output is outdated and I'm too tired to update it right now, but the core instructions should be the same.**
 
 If running for the first time:
 ```
@@ -81,7 +83,8 @@ $ als build-mingw/cellular++
 ### Operating
 Assuming you're in the project root:
 ```
-$ build/src/bin/cellular++ tests/spinner.txt
+$ build/src/bin/game_of_life tests/spinner.txt
+$ build/src/bin/wireworld # just toy with it using the mouse, I don't have any test files yet
 ```
 Look at the text file for a usage example.
 
@@ -107,11 +110,11 @@ $ ln -s build/compile_commands.json .
 - [x] Fix weird extra-cell bug (see previous item). (This was caused because of an overflow)
 - [ ] Fix testing (the test just doesn't seem to work).
 - [ ] Implement meaningful tests.
-- [ ] Implement more automata like a powder toy type thing, WireWorld and some roguelike cave-generation algorithms.
-- [ ] Add tutorial/docs/usage instructions, possibly using some automated tool (might not be needed since the library core is so small). For now use `bin/main.cpp` as a reference.
+- [x] Implement more automata like a powder toy type thing, WireWorld and some roguelike cave-generation algorithms (implemented WireWorld so far).
+- [ ] Add tutorial/docs/usage instructions, possibly using some automated tool (might not be needed since the library core is so small). For now use any of the `cpp` files in `src/bin` as a reference.
 - [ ] Add an actual project binary with pluggable automata, possibly using multiple executables in a certain directory (like how Rust's `cargo` tool handles pluggable subcommands)
 - [ ] Automate building with docker
 - [ ] Automate testing with docker. We might need to use Wine for that ~~but I use WSL so it shouldn't run on my system~~.
 - [ ] Setup a `.dockerignore` file. I think it's used to not include files we don't need from the base image?
-- [ ] Implement generic graphical frontend for automata (working on this)
+- [x] Implement generic graphical frontend for automata ~~(working on this)~~ (probably won't happen)
 - [ ] Maybe integrate Lua for writing automata?

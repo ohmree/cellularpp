@@ -7,6 +7,7 @@
 #include <string>
 
 #include "automata/game_of_life.hpp"
+#include "cellular_gui.hpp"
 
 constexpr const SDL_Color BLACK = {0, 0, 0, 255};
 constexpr const SDL_Color WHITE = {255, 255, 255, 255};

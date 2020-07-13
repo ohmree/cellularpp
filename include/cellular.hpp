@@ -1,19 +1,18 @@
-#ifndef _CELLULAR_HPP_
-#define _CELLULAR_HPP_
+#ifndef CELLULAR_HPP_
+#define CELLULAR_HPP_
 
 #include <algorithm>
-#include <cstddef>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "experimental/mdspan"
 
-namespace cellular {
 namespace stdex = std::experimental;
+namespace cellular {
+
 template<typename T>
 class Automaton {
 	using Grid = stdex::mdspan<T, stdex::dynamic_extent, stdex::dynamic_extent>;
@@ -21,48 +20,52 @@ class Automaton {
 public:
 	// Automaton of size x*y with all cells initialized to the default state
 	// (first in T enum)
-	Automaton(const size_t w, const size_t h);
-	Automaton() = delete;
-	void     step();
-	void     print();
-	T&       operator()(const size_t x, const size_t y);
-	const T& operator()(const size_t x, const size_t y) const;
-	size_t   width() const;
-	size_t   height() const;
-	void     set_grid_from_file(const std::filesystem::path& filename,
-	                            const char                   delimiter = '\n');
-	void set_grid_from_string(std::string&& str, const char delimiter = '\n');
+	inline Automaton(const size_t w, const size_t h);
+	inline Automaton() = delete;
+	inline void     step();
+	inline void     print();
+	inline T&       operator()(const size_t x, const size_t y);
+	inline const T& operator()(const size_t x, const size_t y) const;
+	inline size_t   width() const;
+	inline size_t   height() const;
+	inline void     set_grid_from_file(const std::filesystem::path& filename,
+	                                   const char delimiter = '\n');
+	inline void     set_grid_from_string(std::string&& str,
+	                                     const char    delimiter = '\n');
 
 protected:
-	const std::unordered_map<const char*, T>& vn_neighborhood_at(
+	inline const std::unordered_map<const char*, T>& vn_neighborhood_at(
 	    const size_t x,
 	    const size_t y);
-	const std::unordered_map<const char*, T>& moore_neighborhood_at(
+	inline const std::unordered_map<const char*, T>& moore_neighborhood_at(
 	    const size_t x,
 	    const size_t y);
-	const std::unordered_map<const char*, T>& extended_vn_neighborhood_at(
-	    const size_t x,
-	    const size_t y);
-	unsigned int neighbors();
-	virtual T    next_state(const T&     current_cell,
-	                        const size_t x,
-	                        const size_t y)   = 0;
-	virtual char state_to_char(T state) const = 0;
-	virtual T    char_to_state(char c) const  = 0;
-	virtual ~Automaton()                      = default;
+	inline const std::unordered_map<const char*, T>&
+	                    extended_vn_neighborhood_at(const size_t x, const size_t y);
+	inline unsigned int neighbors();
+	inline virtual T    next_state(const T&     current_cell,
+	                               const size_t x,
+	                               const size_t y)   = 0;
+	inline virtual char state_to_char(T state) const = 0;
+	inline virtual T    char_to_state(char c) const  = 0;
+	inline virtual ~Automaton()                      = default;
 
 private:
-	/// Width starting from 0, so a 5x5 automaton would have a `m_width` of 4.
+	/// Width starting from 0, so a 5x5 automaton would have a `m_width`
+	/// of 4.
 	size_t m_width;
-	/// Height starting from 0, so a 5x5 automaton would have a `m_height` of 4.
+	/// Height starting from 0, so a 5x5 automaton would have a `m_height`
+	/// of 4.
 	size_t m_height;
 	/// The underlying vector where the current grid is stored.
 	std::vector<T> m_grid_vec;
-	/// The underlying vector where the next iteration of the grid is stored.
+	/// The underlying vector where the next iteration of the grid is
+	/// stored.
 	std::vector<T> m_next_grid_vec;
 	/// The `mdspan` that facilitates convenient 2D access to `m_grid_vec`.
 	Grid m_grid;
-	/// The `mdspan` that facilitates convenient 2D access to `m_next_grid_vec`.
+	/// The `mdspan` that facilitates convenient 2D access to
+	/// `m_next_grid_vec`.
 	Grid m_next_grid;
 	/// The map that stores the result of the `*_neighborhood_at` functions.
 	std::unordered_map<const char*, T> m_neighborhood;
@@ -237,6 +240,7 @@ inline void Automaton<T>::set_grid_from_string(std::string&& str,
 	m_grid          = Grid(m_grid_vec.data(), m_width + 1, m_height + 1);
 	m_next_grid     = Grid(m_next_grid_vec.data(), m_width + 1, m_height + 1);
 }
+
 } // namespace cellular
 
 #endif
