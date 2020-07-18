@@ -1,49 +1,21 @@
-#include "automata/wireworld.hpp"
+#include "wireworld.hpp"
 
-#include <SDL2/SDL.h>
-
+#include <filesystem>
 #include <stdexcept>
 
 #include "cellular.hpp"
-#include "cellular_gui.hpp"
-
-constexpr const SDL_Color YELLOW = {255, 255, 0, 255};
-constexpr const SDL_Color WHITE  = {255, 255, 255, 255};
-constexpr const SDL_Color BLACK  = {0, 0, 0, 255};
-constexpr const SDL_Color RED    = {255, 0, 0, 255};
-constexpr const SDL_Color BLUE   = {0, 0, 255, 255};
 
 using namespace cellular;
 using namespace wireworld;
 
 // First state is the default one
-WireWorld::WireWorld(const size_t width, const size_t height) :
-    GuiAutomaton<State>(width, height) {}
+Wireworld::Wireworld(const size_t width, const size_t height) :
+    Automaton<State>(width, height) {}
 
-const SDL_Color WireWorld::state_to_color(State state) const {
-	SDL_Color ret = BLACK;
-	switch (state) {
-	case State::Empty: {
-		ret = WHITE;
-		break;
-	}
-	case State::ElectronHead: {
-		ret = BLUE;
-		break;
-	}
-	case State::ElectronTail: {
-		ret = RED;
-		break;
-	}
-	case State::Conductor:
-		ret = YELLOW;
-		break;
-	}
+Wireworld::Wireworld(const std::filesystem::path& filename) :
+    Automaton<State>(filename) {}
 
-	return ret;
-}
-
-char WireWorld::state_to_char(State state) const {
+char Wireworld::state_to_char(State state) const {
 	char ret = ' ';
 	switch (state) {
 	case State::Empty: {
@@ -66,7 +38,7 @@ char WireWorld::state_to_char(State state) const {
 	return ret;
 }
 
-State WireWorld::char_to_state(char c) const {
+State Wireworld::char_to_state(char c) const {
 	switch (c) {
 	case ' ': {
 		return State::Empty;
@@ -95,7 +67,7 @@ State WireWorld::char_to_state(char c) const {
 	}
 }
 
-State WireWorld::next_state(const State& current_cell,
+State Wireworld::next_state(const State  current_cell,
                             const size_t x,
                             const size_t y) {
 	State ret = State::Empty;
@@ -129,4 +101,14 @@ State WireWorld::next_state(const State& current_cell,
 	}
 
 	return ret;
+}
+
+State Wireworld::cycle_state(const State current_cell) const {
+	static const std::unordered_map<State, State> m{
+	    {State::Empty, State::Conductor},
+	    {State::Conductor, State::ElectronHead},
+	    {State::ElectronHead, State::ElectronTail},
+	    {State::ElectronTail, State::Empty}};
+
+	return m.at(current_cell);
 }

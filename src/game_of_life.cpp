@@ -1,28 +1,22 @@
-#include "automata/game_of_life.hpp"
+#include "game_of_life.hpp"
 
 #include <SDL2/SDL.h>
 
-#include <array>
-#include <chrono>
-#include <cstdlib>
+#include <filesystem>
 #include <stdexcept>
 
 #include "cellular.hpp"
 #include "cellular_gui.hpp"
-
-constexpr const SDL_Color YELLOW = {255, 255, 0, 255};
-constexpr const SDL_Color WHITE  = {255, 255, 255, 255};
 
 using namespace cellular;
 using namespace gol;
 
 // First state is the default one
 GameOfLife::GameOfLife(const size_t width, const size_t height) :
-    GuiAutomaton<State>(width, height) {}
+    Automaton<State>(width, height) {}
 
-const SDL_Color GameOfLife::state_to_color(State state) const {
-	return state == State::Alive ? YELLOW : WHITE;
-}
+GameOfLife::GameOfLife(const std::filesystem::path& filename) :
+    Automaton<State>(filename){};
 
 char GameOfLife::state_to_char(State state) const {
 	return state == State::Alive ? '#' : '*';
@@ -44,7 +38,7 @@ State GameOfLife::char_to_state(char c) const {
 	}
 }
 
-State GameOfLife::next_state(const State& current_cell,
+State GameOfLife::next_state(const State  current_cell,
                              const size_t x,
                              const size_t y) {
 	const auto&  neighborhood = moore_neighborhood_at(x, y);
@@ -66,4 +60,8 @@ State GameOfLife::next_state(const State& current_cell,
 	}
 
 	return next_generation;
+}
+
+State GameOfLife::cycle_state(const State current_cell) const {
+	return current_cell == State::Alive ? State::Dead : State::Alive;
 }
